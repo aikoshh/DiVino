@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>DiVino - AI Sommelier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                900: '#4a041d', // Deepest wine
+                800: '#881337', // Merlot
+                700: '#be123c', // Red
+                600: '#e11d48', // Bright
+                50: '#fff1f2',  // Light pink bg
+              }
+            },
+            fontFamily: {
+              serif: ['Playfair Display', 'serif'],
+              sans: ['Inter', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+      
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f9fafb;
+        color: #1f2937;
+      }
+      h1, h2, h3, .font-serif {
+        font-family: 'Playfair Display', serif;
+      }
+      
+      /* Animation Utilities */
+      .animate-fade-in-down {
+        animation: fadeInDown 0.6s ease-out forwards;
+      }
+      .animate-slide-up {
+        animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      .animate-pulse-subtle {
+        animation: pulseSubtle 2s infinite;
+      }
+      
+      @keyframes fadeInDown {
+        from { opacity: 0; transform: translate3d(0, -10px, 0); }
+        to { opacity: 1; transform: translate3d(0, 0, 0); }
+      }
+      @keyframes slideUp {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+      }
+      @keyframes pulseSubtle {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.8; }
+      }
+
+      /* Hide scrollbar for horizontal scrolling areas */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      .safe-area-bottom {
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

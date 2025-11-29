@@ -1,0 +1,7 @@
+{
+  "name": "DiVino",
+  "description": "Your AI Sommelier. Search, compare, and discover wines with expert advice.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
