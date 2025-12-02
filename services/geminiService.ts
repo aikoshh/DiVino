@@ -249,7 +249,7 @@ export const askSommelier = async (wine: Wine, question: string): Promise<string
     Note: ${wine.tastingNotes}
     
     Domanda utente: "${question}"
-    
+     
     Rispondi in italiano, tono professionale ma amichevole (max 6-7 frasi).
     Dai consigli su servizio, abbinamento o conservazione.
   `;
