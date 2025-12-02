@@ -200,9 +200,13 @@ const WineImage = ({ wine, onImageGenerated, className = "", mode = 'cover' }: {
 
 // Helper to determine placeholder color based on wine style
 const getAveragePrice = (priceStr: string): number => {
-  const numbers = priceStr.match(/\d+/g);
+  if (!priceStr) return 0;
+  // Handle formats like "€ 10-12", "10 €", "€10,50"
+  const normalized = priceStr.replace(',', '.');
+  const numbers = normalized.match(/\d+(\.\d+)?/g);
+  
   if (!numbers || numbers.length === 0) return 0;
-  const sum = numbers.reduce((acc, curr) => acc + parseInt(curr, 10), 0);
+  const sum = numbers.reduce((acc, curr) => acc + parseFloat(curr), 0);
   return sum / numbers.length;
 };
 
@@ -851,7 +855,7 @@ const App: React.FC = () => {
                             >
                                 <Send className="w-5 h-5" />
                             </button>
-                         </div>
+                        </div>
                     </div>
                 </div>
             </div>
