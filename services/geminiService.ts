@@ -118,6 +118,7 @@ const MOCK_WINES: Wine[] = [
     qualityRating: 94,
     priceQualityScore: 95,
     approxPriceEUR: '45-55 €',
+    detectedPrice: 38.50, // Added mock detected price to demonstrate feature
     bestBuyUrl: 'https://www.google.com/search?q=chianti+antinori+prezzo',
     imageSearchQuery: 'Chianti Classico Antinori bottle',
     tasteProfile: { structure: 75, tannins: 70, sweetness: 5, acidity: 85 },

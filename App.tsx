@@ -150,7 +150,7 @@ const HighlightsSection = ({ quality, style }: { quality: number, style: string 
     );
 };
 
-const WineImage = ({ wine, onImageGenerated, className = "" }: { wine: Wine, onImageGenerated: (id: string, url: string) => void, className?: string }) => {
+const WineImage = ({ wine, onImageGenerated, className = "", mode = 'cover' }: { wine: Wine, onImageGenerated: (id: string, url: string) => void, className?: string, mode?: 'cover' | 'contain' }) => {
   const [loading, setLoading] = useState(false);
   const [showImage, setShowImage] = useState(false);
 
@@ -176,7 +176,7 @@ const WineImage = ({ wine, onImageGenerated, className = "" }: { wine: Wine, onI
         <img 
           src={wine.generatedImage} 
           alt={wine.name} 
-          className={`w-full h-full object-cover transition-all duration-700 ease-in-out ${showImage ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`}
+          className={`w-full h-full ${mode === 'contain' ? 'object-contain p-6' : 'object-cover'} transition-all duration-700 ease-in-out ${showImage ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`}
           onLoad={handleImageLoad}
           loading="lazy" 
           decoding="async"
@@ -549,7 +549,7 @@ const App: React.FC = () => {
                      <div>
                         {wine.detectedPrice ? (
                             <div className="flex flex-col">
-                                <span className="text-[10px] text-gray-400 font-bold uppercase mb-0.5">Offerta vs Mercato</span>
+                                <span className="text-[10px] text-brand-700 font-bold uppercase mb-0.5">PREZZO MENU</span>
                                 <div className="flex items-baseline gap-2">
                                     <span className="font-bold text-xl text-brand-800">€ {wine.detectedPrice.toFixed(2)}</span>
                                     <span className="text-xs text-gray-400 line-through decoration-gray-300">
@@ -594,7 +594,7 @@ const App: React.FC = () => {
       <div className="fixed inset-0 z-50 bg-white overflow-y-auto animate-slide-up flex flex-col">
         {/* Full Image Header */}
         <div className="relative h-[45vh] w-full bg-gray-100">
-             <WineImage wine={selectedWine} onImageGenerated={handleUpdateWineImage} className="w-full h-full" />
+             <WineImage wine={selectedWine} onImageGenerated={handleUpdateWineImage} className="w-full h-full" mode="contain" />
              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
              
              {/* Nav Buttons */}
@@ -621,7 +621,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Content Body */}
-        <div className="flex-1 bg-white relative z-10 -mt-6 rounded-t-[30px] p-6 space-y-8 pb-32">
+        <div className="flex-1 bg-white relative z-10 -mt-6 rounded-t-[30px] p-6 space-y-8 pb-48">
             
             {/* Main Stats Row */}
             <div className="flex items-center justify-between border-b border-gray-100 pb-6">
@@ -632,20 +632,26 @@ const App: React.FC = () => {
                          <div className="text-xs text-gray-400">Basato su analisi AI</div>
                      </div>
                  </div>
-                 <div className="text-right">
+                 <div className="text-right flex flex-col items-end">
                      {selectedWine.detectedPrice ? (
                          <>
+                             <div className="text-xs text-brand-700 font-bold uppercase mb-1">PREZZO MENU</div>
                              <div className="text-3xl font-bold text-gray-900">€{selectedWine.detectedPrice.toFixed(2)}</div>
-                             {isCheaper && (
-                                 <div className="text-xs text-green-600 font-bold flex items-center justify-end gap-1">
-                                     <TrendingDown className="w-3 h-3" /> Risparmi €{savings.toFixed(2)}
-                                 </div>
-                             )}
+                             <div className="flex flex-col items-end mt-1">
+                                <div className="text-xs text-gray-400">vs Mercato: {averageMarketPrice > 0 ? `€${averageMarketPrice.toFixed(2)}` : selectedWine.approxPriceEUR}</div>
+                                {isCheaper && (
+                                    <div className="text-xs text-green-600 font-bold flex items-center gap-1">
+                                        <TrendingDown className="w-3 h-3" /> Risparmi €{savings.toFixed(2)}
+                                    </div>
+                                )}
+                             </div>
                          </>
                      ) : (
-                         <div className="text-2xl font-bold text-gray-800">{selectedWine.approxPriceEUR}</div>
+                         <>
+                            <div className="text-2xl font-bold text-gray-800">{selectedWine.approxPriceEUR}</div>
+                            <div className="text-xs text-gray-400 mt-1">Prezzo medio mercato</div>
+                         </>
                      )}
-                     <div className="text-xs text-gray-400 mt-1">Prezzo medio mercato</div>
                  </div>
             </div>
 
