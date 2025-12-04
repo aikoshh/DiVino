@@ -1,44 +1,37 @@
+export enum WineType {
+  RED = 'Rosso',
+  WHITE = 'Bianco',
+  ROSE = 'Rosato',
+  SPARKLING = 'Bollicine',
+  DESSERT = 'Dessert',
+  OTHER = 'Altro'
+}
+
+export interface TasteProfile {
+  bold: number; // 0-100 (Light to Bold)
+  tannic: number; // 0-100 (Smooth to Tannic)
+  sweet: number; // 0-100 (Dry to Sweet)
+  acidic: number; // 0-100 (Soft to Acidic)
+}
+
 export interface Wine {
   id: string;
   name: string;
-  producer: string;
-  country: string;
+  winery: string;
   region: string;
-  style: string;
+  country: string;
+  year?: string;
+  type: WineType;
+  averageRating: number; // 0.0 to 5.0
+  reviewCount: number;
+  priceEstimate: string; // Market price estimate
+  menuPrice?: number; // Specific price found on the menu
+  description: string;
   grapes: string[];
-  vintagesRecommended: string[];
-  keyCharacteristics: string;
-  tastingNotes: string;
   foodPairing: string[];
-  expertOpinion: string;
-  qualityRating: number;
-  priceQualityScore: number;
-  approxPriceEUR: string;
-  bestBuyUrl: string;
-  imageSearchQuery: string;
-  labelTextRaw?: string;
-  generatedImage?: string;
-  detectedPrice?: number;
-  tasteProfile?: {
-    structure: number; // 0 (Leggero) - 100 (Strutturato)
-    tannins: number;   // 0 (Morbido) - 100 (Tannico)
-    sweetness: number; // 0 (Secco) - 100 (Dolce)
-    acidity: number;   // 0 (Piatto) - 100 (Acidulo)
-  };
-  flavors?: {
-    wood?: string; // e.g., "Legno, vaniglia"
-    fruit?: string; // e.g., "Mora, ciliegia"
-    earth?: string; // e.g., "Pelle, erbaceo"
-  };
+  alcoholContent?: string;
+  tasteProfile?: TasteProfile;
+  imageUrl?: string; // Optional URL for the specific bottle
 }
 
-export interface WineResponse {
-  wines: Wine[];
-}
-
-export interface ChatMessage {
-  role: 'user' | 'model';
-  text: string;
-}
-
-export type ViewState = 'HOME' | 'RESULTS' | 'DETAIL' | 'CHAT';
+export type ViewState = 'HOME' | 'SCANNER' | 'RESULTS' | 'DETAIL' | 'CELLAR';

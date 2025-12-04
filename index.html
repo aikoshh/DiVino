@@ -2,67 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>DiVino - AI Sommelier</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DiVino</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              brand: {
-                900: '#4a041d', // Deepest wine
-                800: '#881337', // Merlot
-                700: '#be123c', // Red
-                600: '#e11d48', // Bright
-                50: '#fff1f2',  // Light pink bg
-              }
-            },
-            fontFamily: {
-              serif: ['Playfair Display', 'serif'],
-              sans: ['Inter', 'sans-serif'],
-            }
-          }
-        }
-      }
-    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
-      
       body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f9fafb;
-        color: #1f2937;
+        font-family: 'Lato', sans-serif;
+        background-color: #1c1917; /* stone-900 */
+        color: #e7e5e4; /* stone-200 */
       }
-      h1, h2, h3, .font-serif {
+      h1, h2, h3, h4, h5, h6, .font-serif {
         font-family: 'Playfair Display', serif;
       }
-      
-      /* Animation Utilities */
-      .animate-fade-in-down {
-        animation: fadeInDown 0.6s ease-out forwards;
-      }
-      .animate-slide-up {
-        animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      }
-      .animate-pulse-subtle {
-        animation: pulseSubtle 2s infinite;
-      }
-      
-      @keyframes fadeInDown {
-        from { opacity: 0; transform: translate3d(0, -10px, 0); }
-        to { opacity: 1; transform: translate3d(0, 0, 0); }
-      }
-      @keyframes slideUp {
-        from { transform: translateY(100%); }
-        to { transform: translateY(0); }
-      }
-      @keyframes pulseSubtle {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.8; }
-      }
-
-      /* Hide scrollbar for horizontal scrolling areas */
+      /* Hide scrollbar for clean UI */
       .no-scrollbar::-webkit-scrollbar {
         display: none;
       }
@@ -70,25 +25,22 @@
         -ms-overflow-style: none;
         scrollbar-width: none;
       }
-
-      .safe-area-bottom {
-        padding-bottom: env(safe-area-inset-bottom);
-      }
     </style>
-    <!-- IMPORTANTE: Usiamo esm.sh per una compatibilità web universale e React 18 stabile -->
-    <script type="importmap">
-    {
-      "imports": {
-        "react": "https://esm.sh/react@18.2.0",
-        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-        "react-dom": "https://esm.sh/react-dom@18.2.0",
-        "lucide-react": "https://esm.sh/lucide-react@0.263.1",
-        "@google/genai": "https://esm.sh/@google/genai@0.1.1"
-      }
-    }
-    </script>
-  </head>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
   <body>
     <div id="root"></div>
-  </body>
+  <script type="module" src="/index.tsx"></script>
+</body>
 </html>

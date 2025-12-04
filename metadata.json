@@ -1,6 +1,6 @@
 {
   "name": "DiVino",
-  "description": "Your AI Sommelier. Search, compare, and discover wines with expert advice.",
+  "description": "Un'applicazione premium per la scansione di vini, capace di digitalizzare menu, identificare bottiglie e analizzare intere pareti di vino con dettagli da sommelier.",
   "requestFramePermissions": [
     "camera"
   ]
