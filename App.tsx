@@ -4,8 +4,8 @@ import Hero from './components/Hero';
 import Scanner from './components/Scanner';
 import WineList from './components/WineList';
 import WineDetail from './components/WineDetail';
-import Cellar from './components/Cellar';
 import Navbar from './components/Navbar';
+import Cellar from './components/Cellar';
 import { scanWineImage, searchWineByText } from './services/geminiService';
 import { Loader2 } from 'lucide-react';
 
@@ -13,24 +13,26 @@ const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('HOME');
   const [wines, setWines] = useState<Wine[]>([]);
   const [selectedWine, setSelectedWine] = useState<Wine | null>(null);
-  const [cellar, setCellar] = useState<Wine[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  
+  // Cellar State (Favorites)
+  const [cellar, setCellar] = useState<Wine[]>([]);
 
-  // Load Cellar from LocalStorage on mount
+  // Load cellar from local storage on mount
   useEffect(() => {
     const savedCellar = localStorage.getItem('divino_cellar');
     if (savedCellar) {
       try {
         setCellar(JSON.parse(savedCellar));
       } catch (e) {
-        console.error("Error parsing cellar data", e);
+        console.error("Failed to parse cellar data");
       }
     }
   }, []);
 
-  // Save Cellar to LocalStorage whenever it changes
+  // Save cellar to local storage whenever it changes
   useEffect(() => {
     localStorage.setItem('divino_cellar', JSON.stringify(cellar));
   }, [cellar]);
@@ -54,17 +56,38 @@ const App: React.FC = () => {
     "Creazione delle note di degustazione..."
   ];
 
+  // Helper to check if a wine is in the cellar (fuzzy match by name and winery since IDs change)
+  const isWineInCellar = (wine: Wine): boolean => {
+    return cellar.some(w => 
+      w.name.toLowerCase() === wine.name.toLowerCase() && 
+      w.winery.toLowerCase() === wine.winery.toLowerCase() &&
+      w.year === wine.year
+    );
+  };
+
+  const toggleCellar = (wine: Wine) => {
+    if (isWineInCellar(wine)) {
+      // Remove
+      setCellar(prev => prev.filter(w => 
+        !(w.name.toLowerCase() === wine.name.toLowerCase() && 
+          w.winery.toLowerCase() === wine.winery.toLowerCase() &&
+          w.year === wine.year)
+      ));
+    } else {
+      // Add
+      setCellar(prev => [...prev, wine]);
+    }
+  };
+
   const handleScan = async (file: File, mode: 'bottle' | 'menu' | 'wall') => {
     setLoading(true);
     setError(null);
 
-    // Helper to read file as promise
     const readFileAsBase64 = (file: File): Promise<string> => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => {
                 if (typeof reader.result === 'string') {
-                    // Split to get only base64 data
                     const base64 = reader.result.split(',')[1];
                     resolve(base64);
                 } else {
@@ -129,48 +152,29 @@ const App: React.FC = () => {
     setView('DETAIL');
   };
 
-  // Toggle wine in cellar logic
-  const toggleCellar = (wine: Wine) => {
-    const exists = cellar.some(w => 
-      w.name.toLowerCase() === wine.name.toLowerCase() && 
-      w.winery.toLowerCase() === wine.winery.toLowerCase()
-    );
-
-    if (exists) {
-      setCellar(prev => prev.filter(w => 
-        !(w.name.toLowerCase() === wine.name.toLowerCase() && w.winery.toLowerCase() === wine.winery.toLowerCase())
-      ));
-    } else {
-      setCellar(prev => [...prev, wine]);
-    }
-  };
-
   const goBack = () => {
-    if (view === 'DETAIL') {
-      // If we came from results, go back to results. 
-      // If we clicked a wine in Cellar, go back to Cellar.
-      // If we have current search results, go to results, otherwise home or cellar.
-      if (wines.length > 0) {
-        setView('RESULTS');
-      } else {
-        // If viewing details from cellar, go back to cellar
-        // We need to know previous state technically, but simple logic:
-        // If wines is empty, we likely came from Cellar
-        setView('CELLAR'); 
-      }
-    } else {
+    if (view === 'DETAIL' && wines.length > 1) {
+      setView('RESULTS');
+    } else if (view === 'DETAIL' && wines.length <= 1) {
+       // If we came from cellar or single result, go to home or cellar based on history context? 
+       // For simplicity, if we are in Detail and have no list state, check if we were navigating cellar.
+       // Here we default to Home, but we can improve if needed.
+       setView('HOME');
+       setWines([]);
+    } else if (view === 'RESULTS') {
       setView('HOME');
       setWines([]);
+    } else {
+      setView('HOME');
     }
   };
 
   return (
-    <div className="h-screen bg-[#1c1917] text-[#e7e5e4] flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-[#1c1917] text-[#e7e5e4] flex flex-col relative overflow-hidden">
       {/* Texture Overlay for Premium Feel */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23fff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`}}></div>
       
-      {/* Main Content Area */}
-      <div className="relative z-10 flex-1 flex flex-col min-h-0 overflow-hidden">
+      <div className="relative z-10 flex-1 flex flex-col h-full overflow-hidden">
         {loading && (
           <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#1c1917]/95 backdrop-blur-md transition-all duration-500">
             {/* Visual centerpiece with Image */}
@@ -218,15 +222,15 @@ const App: React.FC = () => {
 
         {view === 'HOME' && <Hero onScan={handleScan} onSearch={handleTextSearch} />}
         {view === 'SCANNER' && <Scanner onScan={handleScan} onCancel={() => setView('HOME')} />}
-        {view === 'RESULTS' && <WineList wines={wines} cellar={cellar} onSelect={handleSelectWine} onBack={() => setView('HOME')} />}
-        {view === 'CELLAR' && <Cellar cellar={cellar} onSelect={handleSelectWine} />}
+        {view === 'RESULTS' && <WineList wines={wines} onSelect={handleSelectWine} onBack={() => setView('HOME')} cellar={cellar} />}
+        {view === 'CELLAR' && <Cellar wines={cellar} onSelect={handleSelectWine} />}
         {view === 'DETAIL' && selectedWine && (
-          <WineDetail 
-            wine={selectedWine} 
-            cellar={cellar}
-            onToggleCellar={toggleCellar}
-            onBack={goBack} 
-          />
+            <WineDetail 
+                wine={selectedWine} 
+                onBack={goBack} 
+                isSaved={isWineInCellar(selectedWine)}
+                onToggleCellar={() => toggleCellar(selectedWine)}
+            />
         )}
       </div>
 

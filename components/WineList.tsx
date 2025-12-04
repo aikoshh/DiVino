@@ -1,17 +1,17 @@
 import React, { useState, useMemo } from 'react';
 import { Wine, WineType } from '../types';
-import { ChevronLeft, Star, ChevronRight, TrendingUp, List, Sparkles, Award, Home } from 'lucide-react';
+import { ChevronLeft, Star, ChevronRight, TrendingUp, List, Sparkles, Award, Wine as WineIcon } from 'lucide-react';
 
 interface WineListProps {
   wines: Wine[];
-  cellar: Wine[]; // Pass cellar to check for duplicates
   onSelect: (wine: Wine) => void;
   onBack: () => void;
+  cellar: Wine[];
 }
 
 type SortMode = 'value' | 'rating' | 'original';
 
-const WineList: React.FC<WineListProps> = ({ wines, cellar, onSelect, onBack }) => {
+const WineList: React.FC<WineListProps> = ({ wines, onSelect, onBack, cellar }) => {
   const [sortMode, setSortMode] = useState<SortMode>('value');
 
   // Helper to extract a numeric price for sorting
@@ -29,6 +29,15 @@ const WineList: React.FC<WineListProps> = ({ wines, cellar, onSelect, onBack }) 
     
     // 3. No price data: Return Infinity to push to bottom
     return Infinity;
+  };
+
+  // Helper to check if wine is in cellar (fuzzy match)
+  const isWineInCellar = (wine: Wine): boolean => {
+    return cellar.some(w => 
+      w.name.toLowerCase() === wine.name.toLowerCase() && 
+      w.winery.toLowerCase() === wine.winery.toLowerCase() &&
+      w.year === wine.year
+    );
   };
 
   // Memoized sorted list
@@ -121,14 +130,11 @@ const WineList: React.FC<WineListProps> = ({ wines, cellar, onSelect, onBack }) 
             const badgeLabel = sortMode === 'value' ? 'MIGLIOR AFFARE' : 'MIGLIOR VOTO';
             const BadgeIcon = sortMode === 'value' ? Sparkles : Award;
             
-            // Check if in cellar
-            const isInCellar = cellar.some(w => 
-                w.name.toLowerCase() === wine.name.toLowerCase() && 
-                w.winery.toLowerCase() === wine.winery.toLowerCase()
-            );
-            
             // Ensure we don't badge if data is missing (e.g. top of list but price is infinity)
             const showBadge = isTopItem && (sortMode === 'rating' ? wine.averageRating > 0 : getNumericPrice(wine) !== Infinity);
+            
+            // Check if user has this wine in cellar
+            const inCellar = isWineInCellar(wine);
 
             return (
                 <div 
@@ -159,17 +165,17 @@ const WineList: React.FC<WineListProps> = ({ wines, cellar, onSelect, onBack }) 
                     <div className="flex-1">
                     <div className="flex justify-between items-start">
                         <div>
-                            <div className="flex items-center gap-2">
-                                <h3 className={`font-serif text-xl transition-colors ${showBadge ? 'text-amber-100' : 'text-stone-100 group-hover:text-amber-500'}`}>
-                                    {wine.name}
-                                </h3>
-                                {isInCellar && (
-                                    <div className="bg-green-900/40 p-1 rounded-full border border-green-800" title="Presente in Cantina">
-                                        <Home size={10} className="text-green-400" />
-                                    </div>
-                                )}
-                            </div>
-                            <p className="text-stone-400 text-sm mt-1">{wine.winery} • {wine.region}</p>
+                        <div className="flex items-center gap-2">
+                            <h3 className={`font-serif text-xl transition-colors ${showBadge ? 'text-amber-100' : 'text-stone-100 group-hover:text-amber-500'}`}>
+                                {wine.name}
+                            </h3>
+                            {inCellar && (
+                                <div title="Presente nella tua cantina" className="bg-emerald-900/50 rounded-full p-1 border border-emerald-700">
+                                    <WineIcon size={12} className="text-emerald-400" />
+                                </div>
+                            )}
+                        </div>
+                        <p className="text-stone-400 text-sm mt-1">{wine.winery} • {wine.region}</p>
                         </div>
                         {wine.averageRating && (
                         <div className="flex flex-col items-end min-w-[60px]">

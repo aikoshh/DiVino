@@ -4,19 +4,13 @@ import { ChevronLeft, Star, Droplets, Utensils, Award, Wind, ShoppingCart, Exter
 
 interface WineDetailProps {
   wine: Wine;
-  cellar: Wine[];
-  onToggleCellar: (wine: Wine) => void;
   onBack: () => void;
+  isSaved: boolean;
+  onToggleCellar: () => void;
 }
 
-const WineDetail: React.FC<WineDetailProps> = ({ wine, cellar, onToggleCellar, onBack }) => {
+const WineDetail: React.FC<WineDetailProps> = ({ wine, onBack, isSaved, onToggleCellar }) => {
   
-  // Check if wine is in cellar (matching by name and winery)
-  const isInCellar = cellar.some(w => 
-    w.name.toLowerCase() === wine.name.toLowerCase() && 
-    w.winery.toLowerCase() === wine.winery.toLowerCase()
-  );
-
   // Helper for Taste Profile Bars
   const TasteBar = ({ label, value, leftLabel, rightLabel }: { label: string, value: number, leftLabel: string, rightLabel: string }) => (
     <div className="mb-4">
@@ -74,15 +68,18 @@ const WineDetail: React.FC<WineDetailProps> = ({ wine, cellar, onToggleCellar, o
             </button>
             <span className="ml-2 font-serif text-stone-400 italic">Dettagli Vino</span>
         </div>
+        
+        {/* Cellar/Favorites Toggle */}
         <button 
-            onClick={() => onToggleCellar(wine)}
-            className={`p-2 rounded-full transition-all ${
-                isInCellar 
-                ? 'bg-red-900/30 text-red-500 hover:bg-red-900/50' 
-                : 'bg-stone-800 text-stone-400 hover:text-red-400 hover:bg-stone-700'
+            onClick={onToggleCellar}
+            className={`p-2 rounded-full border transition-all duration-300 flex items-center gap-2 ${
+                isSaved 
+                ? 'bg-emerald-900/30 border-emerald-600 text-emerald-400' 
+                : 'bg-transparent border-stone-700 text-stone-400 hover:border-stone-500'
             }`}
         >
-            <Heart className={`w-6 h-6 ${isInCellar ? 'fill-current' : ''}`} />
+            <Heart size={20} className={isSaved ? "fill-emerald-400" : ""} />
+            {isSaved && <span className="text-xs font-bold uppercase tracking-wide hidden sm:inline">In Cantina</span>}
         </button>
       </div>
 
@@ -100,28 +97,17 @@ const WineDetail: React.FC<WineDetailProps> = ({ wine, cellar, onToggleCellar, o
                 {/* Glass effect overlay */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-black/40 to-white/5 pointer-events-none"></div>
                 
-                {/* In Cellar Overlay Badge on Bottle */}
-                {isInCellar && (
-                     <div className="absolute bottom-6 bg-green-900/90 backdrop-blur border border-green-700 text-green-100 text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
+                {/* Cellar Badge Overlay */}
+                {isSaved && (
+                    <div className="absolute top-4 right-4 bg-emerald-500 text-stone-900 text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg z-10 animate-fade-in">
                         <CheckCircle2 size={12} />
-                        Presente in Cantina
-                     </div>
+                        CANTINA
+                    </div>
                 )}
             </div>
 
             {/* Info */}
             <div className="flex-1">
-                {/* Cellar Notification Banner */}
-                {isInCellar && (
-                    <div className="mb-6 bg-green-900/20 border border-green-800 rounded-lg p-3 flex items-center gap-3">
-                        <CheckCircle2 className="text-green-500 w-5 h-5 flex-shrink-0" />
-                        <div>
-                            <p className="text-green-200 text-sm font-bold">Hai questo vino!</p>
-                            <p className="text-green-400/80 text-xs">È presente nella tua Cantina personale.</p>
-                        </div>
-                    </div>
-                )}
-
                 <div className="flex justify-between items-start">
                     <div>
                         <h1 className="font-serif text-4xl md:text-5xl text-stone-100 leading-none mb-2">{wine.name}</h1>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ViewState } from '../types';
-import { Home, Search, User, Archive } from 'lucide-react';
+import { Home, Search, User } from 'lucide-react';
 
 interface NavbarProps {
   currentView: ViewState;
@@ -19,18 +19,11 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, setView }) => {
        </button>
        
        <button 
-         onClick={() => setView('CELLAR')}
-         className={`flex flex-col items-center gap-1 ${currentView === 'CELLAR' ? 'text-amber-500' : 'text-stone-500 hover:text-stone-300'}`}
-       >
-          <Archive size={24} strokeWidth={1.5} />
-          <span className="text-[10px] uppercase tracking-wider">Cantina</span>
-       </button>
-
-       <button 
-         className="flex flex-col items-center gap-1 text-stone-500 hover:text-stone-300 opacity-50 cursor-not-allowed"
+          onClick={() => setView('CELLAR')}
+          className={`flex flex-col items-center gap-1 ${currentView === 'CELLAR' ? 'text-amber-500' : 'text-stone-500 hover:text-stone-300'}`}
        >
           <User size={24} strokeWidth={1.5} />
-          <span className="text-[10px] uppercase tracking-wider">Profilo</span>
+          <span className="text-[10px] uppercase tracking-wider">Cantina</span>
        </button>
     </div>
   );
